@@ -72,10 +72,10 @@ class HumanOutputFormat(KVWriter, SeqWriter):
         maxlen = 30
         return s[:maxlen-3] + '...' if len(s) > maxlen else s
 
-    def writeseq(self, seq):
+    def writeseq(self, seq, color):
         seq = list(seq)
         for (i, elem) in enumerate(seq):
-            self.file.write(elem)
+            self.file.write("\033[{0}m{1}\033[0m".format(color, elem))
             if i < len(seq) - 1: # add space unless this is the last one
                 self.file.write(' ')
         self.file.write('\n')
@@ -221,23 +221,24 @@ def getkvs():
     return get_current().name2val
 
 
-def log(*args, level=INFO):
+def log(*args, color="36", level=INFO):
     """
     Write the sequence of args, with no separators, to the console and output files (if you've configured an output file).
     """
-    get_current().log(*args, level=level)
+    color = color
+    get_current().log(*args, color=color, level=level)
 
 def debug(*args):
-    log(*args, level=DEBUG)
+    log(*args, color="33", level=DEBUG)   # yellow
 
 def info(*args):
-    log(*args, level=INFO)
+    log(*args, color="0", level=INFO)    # white
 
 def warn(*args):
-    log(*args, level=WARN)
+    log(*args, color="31", level=WARN)   # red
 
 def error(*args):
-    log(*args, level=ERROR)
+    log(*args, color="31", level=ERROR)
 
 
 def set_level(level):
@@ -334,9 +335,9 @@ class Logger(object):
         self.name2cnt.clear()
         return out
 
-    def log(self, *args, level=INFO):
+    def log(self, *args, color, level=INFO):
         if self.level <= level:
-            self._do_log(args)
+            self._do_log(args, color)
 
     # Configuration
     # ----------------------------------------
@@ -355,10 +356,10 @@ class Logger(object):
 
     # Misc
     # ----------------------------------------
-    def _do_log(self, args):
+    def _do_log(self, args, color="0"):
         for fmt in self.output_formats:
             if isinstance(fmt, SeqWriter):
-                fmt.writeseq(map(str, args))
+                fmt.writeseq(map(str, args), color)
 
 def get_rank_without_mpi_import():
     # check environment variables here instead of importing mpi4py

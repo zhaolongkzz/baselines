@@ -1,6 +1,7 @@
 import sys
 import re
 import multiprocessing
+import os
 import os.path as osp
 import gym
 from collections import defaultdict
@@ -70,8 +71,14 @@ def train(args, extra_args):
     else:
         if alg_kwargs.get('network') is None:
             alg_kwargs['network'] = get_default_network(env_type)
+    if args.save_path:
+        if args.save_path[0] == "~":
+            args.save_path = osp.expanduser(args.save_path)
+        if not os.path.isdir(args.save_path):
+            os.makedirs(args.save_path)
+        alg_kwargs['save_path'] = args.save_path
 
-    print('Training {} on {}:{} with arguments \n{}'.format(args.alg, env_type, env_id, alg_kwargs))
+    logger.log('Training {} on {}:{} with arguments \n{}'.format(args.alg, env_type, env_id, alg_kwargs))
 
     model = learn(
         env=env,

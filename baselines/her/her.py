@@ -169,6 +169,10 @@ def learn(*, network, env, total_timesteps,
 
     n_cycles = params['n_cycles']
     n_epochs = total_timesteps // n_cycles // rollout_worker.T // rollout_worker.rollout_batch_size
+    logger.log()
+    logger.log('n_epochs: {}. total_timesteps: {}. n_cycles:{}. rollout_worker: {}. rollout_batch_size: {}'.\
+                format(n_epochs, total_timesteps, n_cycles, rollout_worker, rollout_worker.rollout_batch_size))
+    logger.log()
 
     return train(
         save_path=save_path, policy=policy, rollout_worker=rollout_worker,
@@ -181,7 +185,7 @@ def learn(*, network, env, total_timesteps,
 @click.option('--env', type=str, default='FetchReach-v1', help='the name of the OpenAI Gym environment that you want to train on')
 @click.option('--total_timesteps', type=int, default=int(5e5), help='the number of timesteps to run')
 @click.option('--seed', type=int, default=0, help='the random seed used to seed both the environment and the training code')
-@click.option('--policy_save_interval', type=int, default=5, help='the interval with which policy pickles are saved. If set to 0, only the best and latest policy will be pickled.')
+@click.option('--policy_save_interval', type=int, default=10, help='the interval with which policy pickles are saved. If set to 0, only the best and latest policy will be pickled.')
 @click.option('--replay_strategy', type=click.Choice(['future', 'none']), default='future', help='the HER replay strategy to be used. "future" uses HER, "none" disables HER.')
 @click.option('--clip_return', type=int, default=1, help='whether or not returns should be clipped')
 @click.option('--demo_file', type=str, default = 'PATH/TO/DEMO/DATA/FILE.npz', help='demo data file path')
