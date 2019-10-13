@@ -224,7 +224,9 @@ def main(args):
 
     if args.save_path is not None and rank == 0:
         save_path = osp.expanduser(args.save_path)
-        model.save(save_path)
+        result = save_path + 'result.pkl'
+        logger.info("Saving the last trained model as {}".format(result))
+        model.save(result)
 
     if args.play:
         logger.log("Running trained model")

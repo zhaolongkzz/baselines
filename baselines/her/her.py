@@ -141,6 +141,9 @@ def learn(*, network, env, total_timesteps,
     policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
     if load_path is not None:
         tf_util.load_variables(load_path)
+        # with open(os.path.expanduser(load_path), 'rb') as f:
+        #     import pickle
+        #     policy = pickle.load(f)
 
     rollout_params = {
         'exploit': False,
