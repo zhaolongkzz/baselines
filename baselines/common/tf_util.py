@@ -355,6 +355,7 @@ def save_variables(save_path, variables=None, sess=None):
     joblib.dump(save_dict, save_path)
 
 def load_variables(load_path, variables=None, sess=None):
+    # tf.reset_default_graph()
     import joblib
     sess = sess or get_session()
     variables = variables or tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)

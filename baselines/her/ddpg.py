@@ -83,8 +83,9 @@ class DDPG(object):
         stage_shapes['r'] = (None,)
         self.stage_shapes = stage_shapes
 
+        # tf.reset_default_graph()
         # Create network.
-        with tf.variable_scope(self.scope):
+        with tf.variable_scope(self.scope, reuse=tf.AUTO_REUSE):
             self.staging_tf = StagingArea(
                 dtypes=[tf.float32 for _ in self.stage_shapes.keys()],
                 shapes=list(self.stage_shapes.values()))

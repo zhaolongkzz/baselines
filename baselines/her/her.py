@@ -18,7 +18,6 @@ def mpi_average(value):
         value = [0.]
     return mpi_moments(np.array(value))[0]
 
-
 def train(*, policy, rollout_worker, evaluator,
           n_epochs, n_test_rollouts, n_cycles, n_batches, policy_save_interval,
           save_path, demo_file, **kwargs):
@@ -138,12 +137,14 @@ def learn(*, network, env, total_timesteps,
         logger.warn()
 
     dims = config.configure_dims(params)
-    policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
+    
     if load_path is not None:
-        tf_util.load_variables(load_path)
-        # with open(os.path.expanduser(load_path), 'rb') as f:
-        #     import pickle
-        #     policy = pickle.load(f)
+        # tf_util.load_variables(load_path)
+        with open(os.path.expanduser(load_path), 'rb') as f:
+            import pickle
+            policy = pickle.load(f)
+    else:
+        policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
 
     rollout_params = {
         'exploit': False,
