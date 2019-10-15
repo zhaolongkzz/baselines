@@ -138,13 +138,18 @@ def learn(*, network, env, total_timesteps,
 
     dims = config.configure_dims(params)
     
-    if load_path is not None:
-        # tf_util.load_variables(load_path)
-        with open(os.path.expanduser(load_path), 'rb') as f:
-            import pickle
-            policy = pickle.load(f)
-    else:
+    if load_path is None:
         policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
+    
+    if load_path is not None:
+        name = load_path.split('/')[-1].split('.')[0]
+        if name == 'result':
+            policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
+            tf_util.load_variables(load_path)
+        else:
+            with open(os.path.expanduser(load_path), 'rb') as f:
+                import pickle
+                policy = pickle.load(f)       
 
     rollout_params = {
         'exploit': False,
@@ -189,7 +194,7 @@ def learn(*, network, env, total_timesteps,
 @click.option('--env', type=str, default='FetchReach-v1', help='the name of the OpenAI Gym environment that you want to train on')
 @click.option('--total_timesteps', type=int, default=int(5e5), help='the number of timesteps to run')
 @click.option('--seed', type=int, default=0, help='the random seed used to seed both the environment and the training code')
-@click.option('--policy_save_interval', type=int, default=10, help='the interval with which policy pickles are saved. If set to 0, only the best and latest policy will be pickled.')
+@click.option('--policy_save_interval', type=int, default=50, help='the interval with which policy pickles are saved. If set to 0, only the best and latest policy will be pickled.')
 @click.option('--replay_strategy', type=click.Choice(['future', 'none']), default='future', help='the HER replay strategy to be used. "future" uses HER, "none" disables HER.')
 @click.option('--clip_return', type=int, default=1, help='whether or not returns should be clipped')
 @click.option('--demo_file', type=str, default = 'PATH/TO/DEMO/DATA/FILE.npz', help='demo data file path')

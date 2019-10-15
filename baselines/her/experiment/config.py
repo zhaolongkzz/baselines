@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import gym
+import gymbot
 
 from baselines import logger
 from baselines.her.ddpg import DDPG
