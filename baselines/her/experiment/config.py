@@ -77,7 +77,7 @@ def prepare_params(kwargs):
     env_name = kwargs['env_name']
 
     def make_env(subrank=None):
-        env = gym.make(env_name)
+        env = gymbot.make(env_name)
         if subrank is not None and logger.get_dir() is not None:
             try:
                 from mpi4py import MPI

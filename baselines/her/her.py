@@ -178,6 +178,9 @@ def learn(*, network, env, total_timesteps,
 
     n_cycles = params['n_cycles']
     n_epochs = total_timesteps // n_cycles // rollout_worker.T // rollout_worker.rollout_batch_size
+    # params['T'] = env._max_episode_steps
+    # rollout_batch_size = mpirun n
+
     logger.log()
     logger.log('n_epochs: {}. total_timesteps: {}. n_cycles:{}. rollout_worker: {}. rollout_batch_size: {}'.\
                 format(n_epochs, total_timesteps, n_cycles, rollout_worker, rollout_worker.rollout_batch_size))
