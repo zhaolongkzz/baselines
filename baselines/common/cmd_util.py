@@ -79,7 +79,7 @@ def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.
         gamestate = gamestate or retro.State.DEFAULT
         env = retro_wrappers.make_retro(game=env_id, max_episode_steps=10000, use_restricted_actions=retro.Actions.DISCRETE, state=gamestate)
     else:
-        env = gymbot.make(env_id, **env_kwargs)
+        env = gym.make(env_id, **env_kwargs)
 
     if flatten_dict_observations and isinstance(env.observation_space, gym.spaces.Dict):
         keys = env.observation_space.spaces.keys()
@@ -114,7 +114,7 @@ def make_mujoco_env(env_id, seed, reward_scale=1.0):
     rank = MPI.COMM_WORLD.Get_rank()
     myseed = seed  + 1000 * rank if seed is not None else None
     set_global_seeds(myseed)
-    env = gymbot.make(env_id)
+    env = gym.make(env_id)
     logger_path = None if logger.get_dir() is None else os.path.join(logger.get_dir(), str(rank))
     env = Monitor(env, logger_path, allow_early_resets=True)
     env.seed(seed)
@@ -128,7 +128,7 @@ def make_robotics_env(env_id, seed, rank=0):
     Create a wrapped, monitored gym.Env for MuJoCo.
     """
     set_global_seeds(seed)
-    env = gymbot.make(env_id)
+    env = gym.make(env_id)
     env = FlattenDictWrapper(env, ['observation', 'desired_goal'])
     env = Monitor(
         env, logger.get_dir() and os.path.join(logger.get_dir(), str(rank)),
