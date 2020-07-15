@@ -77,7 +77,7 @@ class DDPG(object):
         for key in sorted(self.input_dims.keys()):
             if key.startswith('info_'):
                 continue
-            stage_shapes[key] = (None, *input_shapes[key])
+            stage_shapes[key] = (None, *input_shapes[key])  # (None, dim)
         for key in ['o', 'g']:
             stage_shapes[key + '_2'] = stage_shapes[key]
         stage_shapes['r'] = (None,)
@@ -160,7 +160,7 @@ class DDPG(object):
 
     def init_demo_buffer(self, demoDataFile, update_stats=True): #function that initializes the demo buffer
 
-        demoData = np.load(demoDataFile) #load the demonstration data from data file
+        demoData = np.load(demoDataFile, allow_pickle=True) #load the demonstration data from data file
         info_keys = [key.replace('info_', '') for key in self.input_dims.keys() if key.startswith('info_')]
         info_values = [np.empty((self.T - 1, 1, self.input_dims['info_' + key]), np.float32) for key in info_keys]
 

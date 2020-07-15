@@ -116,7 +116,7 @@ def learn(*, network, env, total_timesteps,
     with open(os.path.join(logger.get_dir(), 'params.json'), 'w') as f:
          json.dump(params, f)
     params = config.prepare_params(params)
-    params['rollout_batch_size'] = env.num_envs
+    params['rollout_batch_size'] = env.num_envs   # num of parallel rollouts per agent, depends by envs
 
     if demo_file is not None:
         params['bc_loss'] = 1
@@ -138,10 +138,10 @@ def learn(*, network, env, total_timesteps,
 
     dims = config.configure_dims(params)
     
-    if load_path is None:
+    if load_path is None:       # training with ddpg class
         policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
     
-    if load_path is not None:
+    if load_path is not None:   # load policy from pkl
         name = load_path.split('/')[-1].split('.')[0]
         if name == 'result':
             policy = config.configure_ddpg(dims=dims, params=params, clip_return=clip_return)
@@ -149,7 +149,7 @@ def learn(*, network, env, total_timesteps,
         else:
             with open(os.path.expanduser(load_path), 'rb') as f:
                 import pickle
-                policy = pickle.load(f)       
+                policy = pickle.load(f)
 
     rollout_params = {
         'exploit': False,
